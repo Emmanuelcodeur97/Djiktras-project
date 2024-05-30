@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Djiktras algorithme</title>
+</head>
+<body>
+    <script>
+        function dijkstra(graph, start) {
+    // Initialize the shortest distances to infinity, except the start vertex which is 0
+    let distances = {};
+    for (let vertex in graph) {
+        distances[vertex] = Infinity;
+    }
+    distances[start] = 0;
+
+    // Priority queue to visit the next vertex with the smallest distance
+    let pq = new PriorityQueue();
+    pq.enqueue([start, 0]);
+
+    // Set to keep track of visited vertices
+    let visited = new Set();
+
+    while (!pq.isEmpty()) {
+        let [currentVertex, currentDistance] = pq.dequeue();
+
+        if (visited.has(currentVertex)) {
+            continue;
+        }
+
+        visited.add(currentVertex);
+
+        for (let neighbor in graph[currentVertex]) {
+            let distance = graph[currentVertex][neighbor];
+            let newDistance = currentDistance + distance;
+
+            if (newDistance < distances[neighbor]) {
+                distances[neighbor] = newDistance;
+                pq.enqueue([neighbor, newDistance]);
+            }
+        }
+    }
+
+    return distances;
+}
+
+class PriorityQueue {
+    constructor() {
+        this.collection = [];
+    }
+
+    enqueue(element) {
+        if (this.isEmpty()) {
+            this.collection.push(element);
+        } else {
+            let added = false;
+            for (let i = 0; i < this.collection.length; i++) {
+                if (element[1] < this.collection[i][1]) {
+                    this.collection.splice(i, 0, element);
+                    added = true;
+                    break;
+                }
+            }
+            if (!added) {
+                this.collection.push(element);
+            }
+        }
+    }
+
+    dequeue() {
+        return this.collection.shift();
+    }
+
+    isEmpty() {
+        return this.collection.length === 0;
+    }
+}
+
+// Example usage:
+const graph = {
+    'A': { 'B': 4, 'C': 2 },
+    'B': { 'A': 4, 'C': 5, 'D': 10 },
+    'C': { 'A': 2, 'B': 5, 'D': 3 },
+    'D': { 'B': 10, 'C': 3 }
+};
+
+console.log(dijkstra(graph, 'A'));
+// Output should be: { A: 0, B: 4, C: 2, D: 5 }
+
+    </script>
+</body>
+</html>
